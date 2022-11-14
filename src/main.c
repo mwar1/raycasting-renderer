@@ -1,32 +1,14 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "ray.h"
+#include "boundary.h"
 #include "vector.h"
 
-#define NUM_RAYS 180
-#define PI 3.14159
-
-const int SCREENWIDTH = 640;
-const int SCREENHEIGHT = 480;
+const int SCREENWIDTH = 1280;
+const int SCREENHEIGHT = 960;
 
 bool closeWindow = false;
-
-typedef struct Ray {
-	Vec2 pos;
-	float angle;
-} Ray;
-
-typedef struct Source {
-	Vec2 pos;
-	Ray rays[NUM_RAYS];
-} Source;
-
-void createSource(Source *src) {
-	for (int i=0; i<NUM_RAYS; i++) {
-		Ray new = {{src->pos.x, src->pos.y}, (2*PI/NUM_RAYS) * i};
-		src->rays[i] = new;
-	}
-}
 
 int main(int argc, char* args[]) {	
 	if(SDL_Init(SDL_INIT_VIDEO ) != 0) {
@@ -53,8 +35,9 @@ int main(int argc, char* args[]) {
 		SDL_RenderClear(renderer);
 
 		// Draw the light rays
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 		for (int i=0; i<NUM_RAYS; i++) {
-			// SDL_RenderDrawLineF(renderer, )
+			SDL_RenderDrawLineF(renderer, lightSource.rays[i].pos.x, lightSource.rays[i].pos.y, lightSource.rays[i].dir.x, lightSource.rays[i].dir.y);
 		}
 
 		SDL_RenderPresent(renderer);
