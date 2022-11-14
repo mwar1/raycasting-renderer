@@ -1,5 +1,8 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = src/main.c src/vector.c
+OBJS = src/main.c
+
+#Header files
+HDRS = src/vector.c src/ray.c
 
 #CC specifies which compiler we're using
 CC = gcc
@@ -9,17 +12,20 @@ CC = gcc
 COMPILER_FLAGS = -w
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2
+LINKER_FLAGS = -lSDL2 -lm
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = main
 
 #This is the target that compiles our executable
 all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(HDRS) -c
+	$(CC) $(OBJS) *.o $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 
-run : all
+exec : all
 	./$(OBJ_NAME)
 
-clean:
-	rm -rf $(OBJ_NAME)
+clean :
+	rm -rf $(OBJ_NAME) *.o
+
+run : exec clean
