@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = src/main.c
+OBJS = src/main.c src/vector.c
 
 #CC specifies which compiler we're using
 CC = gcc
