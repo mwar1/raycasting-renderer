@@ -60,3 +60,8 @@ Vec2 collisionPoint(Boundary *bound, Ray *ray) {
     }
     return result;
 }
+
+void moveSource(Source *src, Vec2 newPos) {
+    memcpy(&src->pos, &newPos, sizeof(Vec2));
+    createSource(src);
+}

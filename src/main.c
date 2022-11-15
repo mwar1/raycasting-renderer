@@ -35,9 +35,15 @@ int main(int argc, char* args[]) {
 
 	while (!closeWindow) {
 		SDL_Event event;
+		Uint8 *keys = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
-			closeWindow = (event.type == SDL_QUIT);
+			closeWindow = (event.type == SDL_QUIT || keys[SDL_SCANCODE_ESCAPE]);
 		}
+
+		// Get the current mouse position
+		int mousex, mousey;
+		SDL_GetMouseState(&mousex, &mousey);
+		moveSource(&lightSource, (Vec2) {mousex, mousey});
 
 		// Clear the screen
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);

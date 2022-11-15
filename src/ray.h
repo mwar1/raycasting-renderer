@@ -24,5 +24,6 @@ typedef struct Boundary {
 void createSource(Source *src);
 Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds);
 Vec2 collisionPoint(struct Boundary *bound, Ray *ray);
+void moveSource(Source *src, Vec2 newPos);
 
 #endif
