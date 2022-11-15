@@ -25,3 +25,7 @@ Vec2 addVectors(Vec2 vec1, Vec2 vec2) {
     result.y = vec1.y + vec2.y;
     return result;
 }
+
+float magnitude(Vec2 vec) {
+    return sqrt((vec.x * vec.x) + (vec.y * vec.y));
+}

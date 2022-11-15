@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAY_H
+#define RAY_H
 
 #include "vector.h"
 
@@ -7,7 +8,7 @@
 
 typedef struct Ray {
 	Vec2 pos;
-    Vec2 dir;
+    Vec2 end;
 } Ray;
 
 typedef struct Source {
@@ -15,4 +16,13 @@ typedef struct Source {
 	Ray rays[NUM_RAYS];
 } Source;
 
+typedef struct Boundary {
+    Vec2 start;
+    Vec2 end;
+} Boundary;
+
 void createSource(Source *src);
+Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds);
+Vec2 collisionPoint(struct Boundary *bound, Ray *ray);
+
+#endif

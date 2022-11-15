@@ -2,13 +2,22 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "ray.h"
-#include "boundary.h"
 #include "vector.h"
+
+#define NUM_BOUNDS 7
 
 const int SCREENWIDTH = 1280;
 const int SCREENHEIGHT = 960;
 
 bool closeWindow = false;
+
+Boundary bounds[NUM_BOUNDS] = {{{5, 5}, {SCREENWIDTH-5, 5}},
+					  		  {{5, 5}, {5, SCREENHEIGHT-5}},
+					  	      {{5, SCREENHEIGHT-5}, {SCREENWIDTH-5, SCREENHEIGHT-5}},
+					 		  {{SCREENWIDTH-5, 5}, {SCREENWIDTH-5, SCREENHEIGHT-5}},
+							  {{100, 200}, {500, 800}},
+							  {{1000, 60}, {1200, 900}},
+							  {{200, 500}, {700, 450}}};
 
 int main(int argc, char* args[]) {	
 	if(SDL_Init(SDL_INIT_VIDEO ) != 0) {
@@ -37,7 +46,17 @@ int main(int argc, char* args[]) {
 		// Draw the light rays
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 		for (int i=0; i<NUM_RAYS; i++) {
-			SDL_RenderDrawLineF(renderer, lightSource.rays[i].pos.x, lightSource.rays[i].pos.y, lightSource.rays[i].dir.x, lightSource.rays[i].dir.y);
+			Vec2 rayEnd = cast(&lightSource.rays[i], bounds, NUM_BOUNDS);
+			//printf("ray end: %f, %f\n", rayEnd.x, rayEnd.y);
+			if (rayEnd.x != -1 && rayEnd.y != -1) {
+				SDL_RenderDrawLineF(renderer, 
+								    lightSource.rays[i].pos.x, lightSource.rays[i].pos.y,
+									rayEnd.x, rayEnd.y);
+			}
+		}
+		for (int i=0; i<NUM_BOUNDS; i++) {
+			SDL_RenderDrawLineF(renderer, bounds[i].start.x, bounds[i].start.y,
+								bounds[i].end.x, bounds[i].end.y);
 		}
 
 		SDL_RenderPresent(renderer);
