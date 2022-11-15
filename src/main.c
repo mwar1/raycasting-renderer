@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 #include "ray.h"
 #include "vector.h"
 
@@ -37,6 +38,7 @@ int main(int argc, char* args[]) {
 	Source lightSource;
 	Vec2 srcPos = {SCREENWIDTH / 2, SCREENHEIGHT / 2};
 	lightSource.pos = srcPos;
+	lightSource.heading = (PI / 4);
 	lightSource.fov = 90;
 	createSource(&lightSource);
 
@@ -47,10 +49,11 @@ int main(int argc, char* args[]) {
 			closeWindow = (event.type == SDL_QUIT || keys[SDL_SCANCODE_ESCAPE]);
 		}
 
-		// Get the current mouse position
-		int mousex, mousey;
-		SDL_GetMouseState(&mousex, &mousey);
-		moveSource(&lightSource, (Vec2) {mousex, mousey});
+		// Move the light source depending on keyboard input
+		if (keys[SDL_SCANCODE_W]) moveSource(&lightSource, 2.0f);
+		if (keys[SDL_SCANCODE_S]) moveSource(&lightSource, -2.0f);
+		if (keys[SDL_SCANCODE_A]) rotateSource(&lightSource, -(PI/180));
+		if (keys[SDL_SCANCODE_D]) rotateSource(&lightSource, (PI/180));
 
 		// Clear the screens
 		SDL_SetRenderDrawColor(topDownRenderer, 0, 0, 0, 0);

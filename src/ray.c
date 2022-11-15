@@ -2,7 +2,10 @@
 #include "ray.h"
 
 void createSource(Source *src) {
-    float initialAngle = (-src->fov / 2) * (PI/180);
+    // Generate the rays for a source, taking into account the FOV and heading
+    // All angles are in radians
+
+    float initialAngle = ((-src->fov / 2) * (PI/180)) + (src->heading);
     float increment = (2*PI) / (NUM_RAYS * (360/src->fov));
     Vec2 pos = {src->pos.x, src->pos.y};
 
@@ -62,7 +65,17 @@ Vec2 collisionPoint(Boundary *bound, Ray *ray) {
     return result;
 }
 
-void moveSource(Source *src, Vec2 newPos) {
+void moveSource(Source *src, float amount) {
+    Vec2 headingVec = vectorFromAngle(src->heading, true);
+    Vec2 offset = {headingVec.x * amount, headingVec.y * amount};
+    Vec2 newPos = addVectors(src->pos, offset);
     memcpy(&src->pos, &newPos, sizeof(Vec2));
+    createSource(src);
+}
+
+void rotateSource(Source *src, float angle) {
+    // Rotate the light source by the given angle (in radians)
+
+    src->heading += angle;
     createSource(src);
 }
