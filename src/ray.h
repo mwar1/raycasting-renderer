@@ -3,7 +3,7 @@
 
 #include "vector.h"
 
-#define NUM_RAYS 180
+#define NUM_RAYS 360
 #define PI 3.14159
 
 typedef struct Ray {
