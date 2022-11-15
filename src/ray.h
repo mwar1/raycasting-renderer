@@ -14,6 +14,7 @@ typedef struct Ray {
 typedef struct Source {
 	Vec2 pos;
 	Ray rays[NUM_RAYS];
+    float fov;
 } Source;
 
 typedef struct Boundary {
@@ -22,7 +23,7 @@ typedef struct Boundary {
 } Boundary;
 
 void createSource(Source *src);
-Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds);
+Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds, float *closestDistance);
 Vec2 collisionPoint(struct Boundary *bound, Ray *ray);
 void moveSource(Source *src, Vec2 newPos);
 

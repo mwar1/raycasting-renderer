@@ -37,6 +37,7 @@ int main(int argc, char* args[]) {
 	Source lightSource;
 	Vec2 srcPos = {SCREENWIDTH / 2, SCREENHEIGHT / 2};
 	lightSource.pos = srcPos;
+	lightSource.fov = 90;
 	createSource(&lightSource);
 
 	while (!closeWindow) {
@@ -60,8 +61,8 @@ int main(int argc, char* args[]) {
 		// Draw the light rays
 		SDL_SetRenderDrawColor(topDownRenderer, 255, 255, 255, 0);
 		for (int i=0; i<NUM_RAYS; i++) {
-			Vec2 rayEnd = cast(&lightSource.rays[i], bounds, NUM_BOUNDS);
-			//printf("ray end: %f, %f\n", rayEnd.x, rayEnd.y);
+			float distance;
+			Vec2 rayEnd = cast(&lightSource.rays[i], bounds, NUM_BOUNDS, &distance);
 			if (rayEnd.x != -1 && rayEnd.y != -1) {
 				SDL_RenderDrawLineF(topDownRenderer, 
 								    lightSource.rays[i].pos.x, lightSource.rays[i].pos.y,

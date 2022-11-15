@@ -2,26 +2,27 @@
 #include "ray.h"
 
 void createSource(Source *src) {
-    float div = (2*PI) / NUM_RAYS;
+    float initialAngle = (-src->fov / 2) * (PI/180);
+    float increment = (2*PI) / (NUM_RAYS * (360/src->fov));
     Vec2 pos = {src->pos.x, src->pos.y};
 
 	for (int i=0; i<NUM_RAYS; i++) {
-        Vec2 dir = vectorFromAngle(div * i, true);
+        Vec2 dir = vectorFromAngle(initialAngle + (increment * i), true);
 		Ray new = {pos, addVectors(dir, pos)};
 		src->rays[i] = new;
 	}
 }
 
-Vec2 cast(Ray *ray, Boundary bounds[], int numBounds) {
-    float closestDist = INFINITY;
+Vec2 cast(Ray *ray, Boundary bounds[], int numBounds, float *closestDistance) {
+    *closestDistance = INFINITY;
     Vec2 closestPoint = {-1, -1};
 
     for (int i=0; i<numBounds; i++) {
         Vec2 pt = collisionPoint(&bounds[i], ray);
         if (pt.x != -1 && pt.y != -1) {
             float mag = magnitude((Vec2) {pt.x - ray->pos.x, pt.y - ray->pos.y});
-            if (mag < closestDist) {
-                closestDist = mag;
+            if (mag < *closestDistance) {
+                *closestDistance = mag;
                 memcpy(&closestPoint, &pt, sizeof(Vec2));
             }
         }
