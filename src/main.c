@@ -14,14 +14,14 @@ float stripWidth = (float) SCREENWIDTH / NUM_RAYS;
 
 bool closeWindow = false;
 
-Boundary bounds[NUM_BOUNDS] = {{{5, 5}, {SCREENWIDTH-5, 5}},
-					  		  {{5, 5}, {5, SCREENHEIGHT-5}},
-					  	      {{5, SCREENHEIGHT-5}, {SCREENWIDTH-5, SCREENHEIGHT-5}},
-					 		  {{SCREENWIDTH-5, 5}, {SCREENWIDTH-5, SCREENHEIGHT-5}},
-							  {{200, 200}, {200, 300}},
-							  {{300, 200}, {200, 200}},
-							  {{300, 200}, {300, 300}},
-							  {{300, 300}, {200, 300}}};
+Boundary bounds[NUM_BOUNDS] = {{{5, 5}, {SCREENWIDTH-5, 5}, (SDL_Color) {255, 255, 255, 255}},
+					  		  {{5, 5}, {5, SCREENHEIGHT-5}, (SDL_Color) {255, 255, 255, 255}},
+					  	      {{5, SCREENHEIGHT-5}, {SCREENWIDTH-5, SCREENHEIGHT-5}, (SDL_Color) {255, 255, 255, 255}},
+					 		  {{SCREENWIDTH-5, 5}, {SCREENWIDTH-5, SCREENHEIGHT-5}, (SDL_Color) {255, 255, 255, 255}},
+							  {{200, 200}, {200, 300}, (SDL_Color) {255, 0, 0, 255}},
+							  {{300, 200}, {200, 200}, (SDL_Color) {255, 0, 0, 255}},
+							  {{300, 200}, {300, 300}, (SDL_Color) {255, 0, 0, 255}},
+							  {{300, 300}, {200, 300}, (SDL_Color) {255, 0, 0, 255}}};
 
 float mapRange(float input, float inMin, float inMax, float outMin, float outMax) {
 	// Map the number 'input', in the range inMin-inMax to the range outMin-outMax
@@ -90,15 +90,21 @@ int main(int argc, char* args[]) {
 
 		//// Top Down Rendering
 		// Draw the light rays
-		SDL_SetRenderDrawColor(topDownRenderer, 255, 255, 255, 0);
+		SDL_SetRenderDrawColor(topDownRenderer, 255, 255, 255, 255);
 
 		float rayDists[NUM_RAYS];
 		Vec2 rayEnds[NUM_RAYS];
+		int hitBounds[NUM_RAYS];
 		for (int i=0; i<NUM_RAYS; i++) {
 			float distance;
-			Vec2 rayEnd = cast(&lightSource.rays[i], bounds, NUM_BOUNDS, &distance);
+			int boundIndex;
+			Vec2 rayEnd = cast(&lightSource.rays[i], bounds, NUM_BOUNDS, &distance, &boundIndex);
+			
+			// Copy relavent data into lists for use in 3D rendering
 			rayDists[i] = distance;
 			memcpy(&rayEnds[i], &rayEnd, sizeof(Vec2));
+			hitBounds[i] = boundIndex;
+
 			if (rayEnd.x != -1 && rayEnd.y != -1) {
 				SDL_RenderDrawLineF(topDownRenderer, 
 								    lightSource.rays[i].pos.x, lightSource.rays[i].pos.y,
@@ -107,6 +113,9 @@ int main(int argc, char* args[]) {
 		}
 		// Draw the boundaries
 		for (int i=0; i<NUM_BOUNDS; i++) {
+			SDL_Color currentColour = bounds[i].colour;
+			SDL_SetRenderDrawColor(topDownRenderer, currentColour.r, currentColour.g, currentColour.b, currentColour.a);
+
 			SDL_RenderDrawLineF(topDownRenderer, bounds[i].start.x, bounds[i].start.y,
 								bounds[i].end.x, bounds[i].end.y);
 		}
@@ -135,8 +144,17 @@ int main(int argc, char* args[]) {
 
 			float perpDistance = fabs( (x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1) ) / magnitude((Vec2) {(x2 - x1), (y2 - y1)});
 
-			float grayValue = mapRange(perpDistance, 0, SCREENHEIGHT, 255, 0);
-			SDL_SetRenderDrawColor(window3DRenderer, grayValue, grayValue, grayValue, 255);
+			// Get the colour of the wall to be rendered
+			SDL_Color currentColour = bounds[hitBounds[i]].colour;
+
+			// Adjust colour to give the illusion of shadow
+			Vec2 wallVec = {bounds[hitBounds[i]].end.x - bounds[hitBounds[i]].start.x, bounds[hitBounds[i]].end.y - bounds[hitBounds[i]].start.y};
+			normalise(&wallVec);
+			float darken = 1;
+
+			if ((wallVec.x == 1.0f || wallVec.x == -1.0f) && wallVec.y == 0.0f) darken = 0.5;
+			SDL_SetRenderDrawColor(window3DRenderer, currentColour.r*darken, currentColour.g*darken, currentColour.b*darken, currentColour.a);
+
 
 			float stripHeight = mapRange(perpDistance, 0, SCREENHEIGHT, SCREENHEIGHT, 0);
 

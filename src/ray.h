@@ -1,6 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include <SDL2/SDL.h>
 #include "vector.h"
 
 #define NUM_RAYS 500
@@ -23,10 +24,11 @@ typedef struct Source {
 typedef struct Boundary {
     Vec2 start;
     Vec2 end;
+    SDL_Color colour;
 } Boundary;
 
 void createSource(Source *src);
-Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds, float *closestDistance);
+Vec2 cast(struct Ray *ray, Boundary bounds[], int numBounds, float *closestDistance, int *boundIndex);
 Vec2 collisionPoint(struct Boundary *bound, Ray *ray);
 void moveSource(Source *src, float amount);
 void rotateSource(Source *src, float angle);

@@ -20,7 +20,7 @@ void createSource(Source *src) {
     }
 }
 
-Vec2 cast(Ray *ray, Boundary bounds[], int numBounds, float *closestDistance) {
+Vec2 cast(Ray *ray, Boundary bounds[], int numBounds, float *closestDistance, int *boundIndex) {
     *closestDistance = INFINITY;
     Vec2 closestPoint = {-1, -1};
 
@@ -30,6 +30,8 @@ Vec2 cast(Ray *ray, Boundary bounds[], int numBounds, float *closestDistance) {
             float mag = magnitude((Vec2) {pt.x - ray->pos.x, pt.y - ray->pos.y});
             if (mag < *closestDistance) {
                 *closestDistance = mag;
+                *boundIndex = i;
+                
                 memcpy(&closestPoint, &pt, sizeof(Vec2));
             }
         }
