@@ -30,6 +30,7 @@ int main(int argc, char* args[]) {
 		printf("Error initializing SDL: %s\n", SDL_GetError());
 	}
 
+	int numDisplays = SDL_GetNumVideoDisplays();
 	Uint32 renderFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 
 	// Create the window for the top-down view
@@ -39,6 +40,12 @@ int main(int argc, char* args[]) {
 	// Create the window for the 3D rendered view
 	SDL_Window *window3D = SDL_CreateWindow("Raycasting 3D View", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH, SCREENHEIGHT, 0);
 	SDL_Renderer *window3DRenderer = SDL_CreateRenderer(window3D, -1, renderFlags);
+
+	if (numDisplays > 1) {
+		SDL_Rect secondMonitor;
+		SDL_GetDisplayBounds(1, &secondMonitor);
+		SDL_SetWindowPosition(window3D, secondMonitor.x + 300, secondMonitor.y + 75);
+	}
 
 	Source lightSource;
 	Vec2 srcPos = {SCREENWIDTH / 2, SCREENHEIGHT / 2};
