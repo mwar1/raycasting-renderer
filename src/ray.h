@@ -3,7 +3,9 @@
 
 #include "vector.h"
 
-#define NUM_RAYS 360
+#define NUM_RAYS 500
+#define PROJ_PLANE_WIDTH 1000
+#define PROJ_PLANE_DIV PROJ_PLANE_WIDTH / NUM_RAYS
 #define PI 3.14159
 
 typedef struct Ray {

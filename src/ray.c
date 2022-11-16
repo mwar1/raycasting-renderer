@@ -5,15 +5,19 @@ void createSource(Source *src) {
     // Generate the rays for a source, taking into account the FOV and heading
     // All angles are in radians
 
-    float initialAngle = ((-src->fov / 2) * (PI/180)) + (src->heading);
-    float increment = (2*PI) / (NUM_RAYS * (360/src->fov));
     Vec2 pos = {src->pos.x, src->pos.y};
+    float displacement = -PROJ_PLANE_WIDTH / 2;
+    float fovRad = src->fov * (PI/180);
+    float planeDistance = (PROJ_PLANE_WIDTH / 2) / tanf(0.5*fovRad);
 
-	for (int i=0; i<NUM_RAYS; i++) {
-        Vec2 dir = vectorFromAngle(initialAngle + (increment * i), true);
-		Ray new = {pos, addVectors(dir, pos)};
-		src->rays[i] = new;
-	}
+    for (int i=0; i<NUM_RAYS; i++) {
+        float angle = atanf(displacement / planeDistance) + src->heading;
+        Vec2 dir = vectorFromAngle(angle, true);
+        Ray new = {pos, addVectors(dir, pos)};
+        src->rays[i] = new;
+
+        displacement += PROJ_PLANE_DIV;
+    }
 }
 
 Vec2 cast(Ray *ray, Boundary bounds[], int numBounds, float *closestDistance) {
